@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Objects;
 
 /** Graph class.
@@ -27,15 +27,16 @@ public class Graph {
         this.N = listOfVertices.size();
         this.adjMatrix = new int[N][N];
         visitedList = new ArrayList<>();
-        printAdjMatrix(adjMatrix);
+//        printAdjMatrix(adjMatrix); <-- For testing purposes
     }
 
-    private void printAdjMatrix(int[][] adjMatrix) {
-        for (int[] matrix : adjMatrix) {
-            System.out.println(Arrays.toString(matrix));
-        }
-        System.out.println();
-    }
+//    Used to print adjMatrix for testing purposes
+//    private void printAdjMatrix(int[][] adjMatrix) {
+//        for (int[] matrix : adjMatrix) {
+//            System.out.println(Arrays.toString(matrix));
+//        }
+//        System.out.println();
+//    }
 
     /** Updates the adjacency matrix to indicate that there is an edge between two vertices.
      * @param firstVertex string
@@ -54,21 +55,11 @@ public class Graph {
             adjMatrix[positionOfFirstVertex][positionOfSecondVertex] = 1;
         }
         adjMatrix[positionOfSecondVertex][positionOfFirstVertex] = 1;
-        // ad = 2, da = 1
-        // from point a to d, is an arrow hence 2. from point d to a is no arrow hence 1.
-
-        // To-do :
-        //    -------------------------
-        //    | A | B | C | D | E | F |
-        //    -------------------------
-        //    | 0 | 0 | 1 | 1 | 0 | 2 |
-        //    -------------------------
-        //    https://learn.bcit.ca/d2l/le/content/808796/viewContent/7221044/View
-        //    Need to arrange vertices by dead ends.
-        //    Order for current matrix dfs output, directed graph:
+        // | AD = 2 | DA = 1 | A ---> D |
+        // from point A to D, is an arrow hence 2. from point D to A is no arrow hence 1.
 
         // Prints the matrix
-        printAdjMatrix(adjMatrix);
+        // printAdjMatrix(adjMatrix);
     }
 
     /** Returns size of graph.
@@ -109,17 +100,13 @@ public class Graph {
         // Clears elements from visited list
         visitedList.clear();
 
-        if (directed) { // Test <-- should refactor this code.
-            tempAdjMatrix = adjMatrix;
-        }
-
         // Starts DFS from starting node
-        dfsHelper(vertex);
+        dfsHelper(vertex, false);
 
         // For each node not yet been visited, continues the DFS search until every node is visited
         for (String v : listOfVertices ) {
             if (!isVisited(v)) {
-                dfsHelper(v);
+                dfsHelper(v, false);
             }
         }
 
@@ -130,15 +117,22 @@ public class Graph {
      *
      * @param vertex String
      */
-    void dfsHelper(String vertex) {
+    void dfsHelper(String vertex, boolean topoSort) {
 
-        visitedList.add(vertex);
-        ArrayList<String> adjacentNodes = getAdjacentNodes(vertex);
+        ArrayList<String> adjacentNodes = getAdjacentNodes(vertex, true);
+
+        if (!topoSort) {
+            visitedList.add(vertex);
+        }
 
         for (String node : adjacentNodes) {
             if (!isVisited(node)) {
-                dfsHelper(node);
+                dfsHelper(node, topoSort);
             }
+        }
+
+        if (topoSort) {
+            visitedList.add(vertex);
         }
     }
 
@@ -147,14 +141,23 @@ public class Graph {
      * @param vertex String
      * @return ArrayList that contains all adjacent nodes to given vertex
      */
-    ArrayList<String> getAdjacentNodes(String vertex){
+    ArrayList<String> getAdjacentNodes(String vertex, boolean topoSort){
 
         ArrayList<String> adjacentNodes = new ArrayList<>();
         int positionOfVertex = listOfVertices.indexOf(vertex);
 
         for (int i = 0; i < adjMatrix.length; i++){
-            if (adjMatrix[positionOfVertex][i] == 1){
-                adjacentNodes.add(getVertex(i));
+            if (topoSort) {
+                if (!isVisited(getVertex(i)) && adjMatrix[positionOfVertex][i] == 2) {
+                    adjacentNodes.add(getVertex(i));
+                }
+            } else {
+                if (adjMatrix[positionOfVertex][i] == 2 && directed) {
+                    adjacentNodes.add(getVertex(i));
+                }
+                if (adjMatrix[positionOfVertex][i] == 1 && !directed) {
+                    adjacentNodes.add(getVertex(i));
+                }
             }
         }
 
@@ -181,7 +184,31 @@ public class Graph {
      * @param vertex the starting vertex
      */
     ArrayList<String> getTopologicalOrder(String vertex) {
-        return null;
+
+        // Returns null if graph is undirected
+        if (!directed) {
+            return null;
+        }
+
+        // Clears elements from visited list
+        visitedList.clear();
+
+        // Step 1: Checks adjacent nodes of vertex through DFS until no more adjacent nodes
+        // Step 2: If none, visits node and backtracks.
+        // Step 3: If no more adjacent nodes, move to next node in listOfVertices
+
+        // Starts DFS from starting node
+        dfsHelper(vertex, true);
+
+        // For each node not yet been visited, continues the DFS search until every node is visited
+        for (String v : listOfVertices ) {
+            if (!isVisited(v)) {
+                dfsHelper(v, true);
+            }
+        }
+        Collections.reverse(visitedList);
+        return visitedList;
+
     }
 }
 
@@ -203,14 +230,19 @@ class Driver {
         Graph graph = new Graph(listOfVertices, true);
 
         // Add edges to graph object
-        graph.addEdge("A", "D");
+        graph.addEdge("A", "B");
+        graph.addEdge("A", "E");
+        graph.addEdge("A", "F");
+        graph.addEdge("B", "C");
         graph.addEdge("D", "B");
         graph.addEdge("D", "C");
-        graph.addEdge("D", "F");
+        graph.addEdge("E", "D");
+        graph.addEdge("F", "C");
         graph.addEdge("F", "E");
 
         // Print DFS
-        System.out.println(graph.getDFSOrder("A"));
+        System.out.println(graph.getTopologicalOrder("B"));
+        System.out.println(graph.getDFSOrder("B"));
 
     }
 }
