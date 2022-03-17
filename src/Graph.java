@@ -13,6 +13,7 @@ public class Graph {
     private final boolean directed;
     private final int N;
     private final int[][] adjMatrix;
+    private int[][] tempAdjMatrix;
     ArrayList<String> visitedList;
 
     /** Takes arraylist of the graph vertices and stores it as instance variables.
@@ -47,8 +48,24 @@ public class Graph {
         int positionOfSecondVertex = listOfVertices.indexOf(secondVertex);
 
         // Creates an edge between given vertices
-        adjMatrix[positionOfFirstVertex][positionOfSecondVertex] = 1;
+        if (directed) {
+            adjMatrix[positionOfFirstVertex][positionOfSecondVertex] = 2;
+        } else {
+            adjMatrix[positionOfFirstVertex][positionOfSecondVertex] = 1;
+        }
         adjMatrix[positionOfSecondVertex][positionOfFirstVertex] = 1;
+        // ad = 2, da = 1
+        // from point a to d, is an arrow hence 2. from point d to a is no arrow hence 1.
+
+        // To-do :
+        //    -------------------------
+        //    | A | B | C | D | E | F |
+        //    -------------------------
+        //    | 0 | 0 | 1 | 1 | 0 | 2 |
+        //    -------------------------
+        //    https://learn.bcit.ca/d2l/le/content/808796/viewContent/7221044/View
+        //    Need to arrange vertices by dead ends.
+        //    Order for current matrix dfs output, directed graph:
 
         // Prints the matrix
         printAdjMatrix(adjMatrix);
@@ -91,6 +108,10 @@ public class Graph {
 
         // Clears elements from visited list
         visitedList.clear();
+
+        if (directed) { // Test <-- should refactor this code.
+            tempAdjMatrix = adjMatrix;
+        }
 
         // Starts DFS from starting node
         dfsHelper(vertex);
@@ -179,14 +200,14 @@ class Driver {
         listOfVertices.add("F");
 
         // Initializes a new graph object of given list of vertices
-        Graph graph = new Graph(listOfVertices, false);
+        Graph graph = new Graph(listOfVertices, true);
 
         // Add edges to graph object
         graph.addEdge("A", "D");
         graph.addEdge("D", "B");
         graph.addEdge("D", "C");
         graph.addEdge("D", "F");
-        graph.addEdge("E", "F");
+        graph.addEdge("F", "E");
 
         // Print DFS
         System.out.println(graph.getDFSOrder("A"));
