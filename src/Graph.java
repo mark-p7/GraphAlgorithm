@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-// import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
 
@@ -119,7 +118,7 @@ public class Graph {
      */
     void dfsHelper(String vertex, boolean topoSort) {
 
-        ArrayList<String> adjacentNodes = getAdjacentNodes(vertex, true);
+        ArrayList<String> adjacentNodes = getAdjacentNodes(vertex, topoSort);
 
         if (!topoSort) {
             visitedList.add(vertex);
@@ -217,29 +216,59 @@ class Driver {
     public static void main(String[] args) {
         System.out.println("Creating Graph...\n");
 
+        // ------------------------------------- UNDIRECTED -------------------------------------
+        // Creates listOfVertices ArrayList
+        ArrayList<String> undirectedListOfVertices = new ArrayList<>();
+        undirectedListOfVertices.add("a0");
+        undirectedListOfVertices.add("a1");
+        undirectedListOfVertices.add("a2");
+        undirectedListOfVertices.add("a3");
+        undirectedListOfVertices.add("a4");
+
+
+        // Initializes a new graph object of given list of vertices
+        Graph undirectedGraph = new Graph(undirectedListOfVertices, false);
+
+        // Add edges to graph object
+        undirectedGraph.addEdge("a0", "a1");
+        undirectedGraph.addEdge("a0", "a4");
+        undirectedGraph.addEdge("a0", "a3");
+        undirectedGraph.addEdge("a1", "a4");
+        undirectedGraph.addEdge("a1", "a2");
+        undirectedGraph.addEdge("a2", "a3");
+        undirectedGraph.addEdge("a3", "a4");
+
+        // Print DFS
+        System.out.println("UNDIRECTED DFS GRAPH, STARTING a0: " + undirectedGraph.getDFSOrder("a0") + "\n");
+
+
+        // ------------------------------------- DIRECTED -------------------------------------
         // Creates listOfVertices ArrayList
         ArrayList<String> listOfVertices = new ArrayList<>();
-        listOfVertices.add("a0");
-        listOfVertices.add("a1");
-        listOfVertices.add("a2");
-        listOfVertices.add("a3");
-        listOfVertices.add("a4");
+        listOfVertices.add("a");
+        listOfVertices.add("b");
+        listOfVertices.add("c");
+        listOfVertices.add("d");
+        listOfVertices.add("e");
+        listOfVertices.add("f");
 
         // Initializes a new graph object of given list of vertices
         Graph graph = new Graph(listOfVertices, true);
 
         // Add edges to graph object
-        graph.addEdge("a0", "a1");
-        graph.addEdge("a0", "a3");
-        graph.addEdge("a0", "a4");
-        graph.addEdge("a1", "a2");
-        graph.addEdge("a1", "a4");
-        graph.addEdge("a2", "a3");
-        graph.addEdge("a3", "a4");
+        graph.addEdge("a", "b");
+        graph.addEdge("a", "e");
+        graph.addEdge("a", "f");
+        graph.addEdge("b", "c");
+        graph.addEdge("d", "c");
+        graph.addEdge("d", "b");
+        graph.addEdge("e", "d");
+        graph.addEdge("f", "e");
+        graph.addEdge("f", "c");
 
         // Print DFS
-        System.out.println(graph.getTopologicalOrder("a1"));
-        System.out.println(graph.getDFSOrder("a2"));
+        System.out.println("DIRECTED TOPOLOGICAL GRAPH, STARTING c: " + graph.getTopologicalOrder("c") + "\n");
+        System.out.println("DIRECTED DFS GRAPH, STARTING a: " + graph.getDFSOrder("a") + "\n");
 
     }
 }
