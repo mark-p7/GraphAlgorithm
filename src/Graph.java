@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+// import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
 
@@ -13,7 +14,6 @@ public class Graph {
     private final boolean directed;
     private final int N;
     private final int[][] adjMatrix;
-    private int[][] tempAdjMatrix;
     ArrayList<String> visitedList;
 
     /** Takes arraylist of the graph vertices and stores it as instance variables.
@@ -219,30 +219,27 @@ class Driver {
 
         // Creates listOfVertices ArrayList
         ArrayList<String> listOfVertices = new ArrayList<>();
-        listOfVertices.add("A");
-        listOfVertices.add("B");
-        listOfVertices.add("C");
-        listOfVertices.add("D");
-        listOfVertices.add("E");
-        listOfVertices.add("F");
+        listOfVertices.add("a0");
+        listOfVertices.add("a1");
+        listOfVertices.add("a2");
+        listOfVertices.add("a3");
+        listOfVertices.add("a4");
 
         // Initializes a new graph object of given list of vertices
         Graph graph = new Graph(listOfVertices, true);
 
         // Add edges to graph object
-        graph.addEdge("A", "B");
-        graph.addEdge("A", "E");
-        graph.addEdge("A", "F");
-        graph.addEdge("B", "C");
-        graph.addEdge("D", "B");
-        graph.addEdge("D", "C");
-        graph.addEdge("E", "D");
-        graph.addEdge("F", "C");
-        graph.addEdge("F", "E");
+        graph.addEdge("a0", "a1");
+        graph.addEdge("a0", "a3");
+        graph.addEdge("a0", "a4");
+        graph.addEdge("a1", "a2");
+        graph.addEdge("a1", "a4");
+        graph.addEdge("a2", "a3");
+        graph.addEdge("a3", "a4");
 
         // Print DFS
-        System.out.println(graph.getTopologicalOrder("B"));
-        System.out.println(graph.getDFSOrder("B"));
+        System.out.println(graph.getTopologicalOrder("a1"));
+        System.out.println(graph.getDFSOrder("a2"));
 
     }
 }
