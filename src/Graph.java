@@ -26,7 +26,7 @@ public class Graph {
         this.N = listOfVertices.size();
         this.adjMatrix = new int[N][N];
         visitedList = new ArrayList<>();
-//        printAdjMatrix(adjMatrix); <-- For testing purposes
+//        printAdjMatrix(adjMatrix); <-- For testing purposes, prints adjacency matrix
     }
 
 //    Used to print adjMatrix for testing purposes
@@ -92,7 +92,7 @@ public class Graph {
 
     /** Returns a valid "DFS Order" of the vertices.
      * Assume that the given starting vertex is valid.
-     * @param vertex the starting vertex
+     * @param vertex the starting vertex, String
      */
     ArrayList<String> getDFSOrder(String vertex) {
 
@@ -115,6 +115,7 @@ public class Graph {
     /** Recursive call that adds a node to the stack through DFS.
      *
      * @param vertex String
+     * @param topoSort boolean, true: toposort, false: non-toposort
      */
     void dfsHelper(String vertex, boolean topoSort) {
 
@@ -138,6 +139,7 @@ public class Graph {
     /** Returns list of adjacent nodes to given vertex.
      *
      * @param vertex String
+     * @param topoSort boolean, true: toposort, false: non-toposort
      * @return ArrayList that contains all adjacent nodes to given vertex
      */
     ArrayList<String> getAdjacentNodes(String vertex, boolean topoSort){
